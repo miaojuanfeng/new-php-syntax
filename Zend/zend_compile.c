@@ -883,6 +883,19 @@ void zend_do_set(const znode *key, const znode *value TSRMLS_DC) /* {{{ */
 }
 /* }}} */
 
+void zend_do_get(znode *result, const znode *arg TSRMLS_DC) /* {{{ */
+{
+	zend_op *opline = get_next_op(CG(active_op_array) TSRMLS_CC);
+
+	opline->result_type = IS_TMP_VAR;
+	opline->result.var = get_temporary_variable(CG(active_op_array));
+	opline->opcode = ZEND_GET;
+	SET_NODE(opline->op1, arg);
+	SET_UNUSED(opline->op2);
+	GET_NODE(result, opline->result);
+}
+/* }}} */
+
 void zend_do_echo(const znode *arg TSRMLS_DC) /* {{{ */
 {
 	zend_op *opline = get_next_op(CG(active_op_array) TSRMLS_CC);

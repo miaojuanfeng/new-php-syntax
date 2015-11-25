@@ -179,5 +179,6 @@ END_EXTERN_C()
 #define ZEND_ASSIGN_POW                      167
 #define ZEND_IN                              168
 #define ZEND_SET                             169
+#define ZEND_GET                             170
 
 #endif

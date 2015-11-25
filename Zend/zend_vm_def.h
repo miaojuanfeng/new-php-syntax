@@ -5778,15 +5778,9 @@ ZEND_VM_HANDLER(169, ZEND_SET, CONST|TMP|VAR|CV, CONST)
 	op1 = GET_OP1_ZVAL_PTR(BP_VAR_R);
 	op2 = GET_OP2_ZVAL_PTR(BP_VAR_R);
 
-	//ZVAL_TRUE(&EX_T(opline->result.var).tmp_var);
-	php_printf("zend_set\n");
-	php_printf("op1: %s\n", Z_STRVAL_P(op1));
-	php_printf("op2: %s\n", Z_STRVAL_P(op2));
-
 	zval op2_copy;
     int use_copy;
 
-    /* Convert the needle into a string */
     zend_make_printable_zval(op2, &op2_copy, &use_copy);
     if (use_copy) {
         op2 = &op2_copy;
@@ -5798,6 +5792,38 @@ ZEND_VM_HANDLER(169, ZEND_SET, CONST|TMP|VAR|CV, CONST)
 	
 	FREE_OP1();
 	FREE_OP2();
+	CHECK_EXCEPTION();
+	ZEND_VM_NEXT_OPCODE();
+}
+
+ZEND_VM_HANDLER(170, ZEND_GET, CONST|TMP|VAR|CV, ANY)
+{
+	USE_OPLINE
+	zend_free_op free_op1;
+	zval *op1;
+
+	SAVE_OPLINE();
+	op1 = GET_OP1_ZVAL_PTR(BP_VAR_R);
+
+	zval op1_copy;
+    int use_copy;
+
+	if( Z_TYPE_P(op1) != IS_STRING ){
+		zend_make_printable_zval(op1, &op1_copy, &use_copy);
+		if (use_copy) {
+		    op1 = &op1_copy;
+		}
+	}
+
+	zval **value;
+	if( !EG(active_symbol_table) || zend_hash_find(EG(active_symbol_table), Z_STRVAL_P(op1), Z_STRLEN_P(op1)+1, (void**)&value) == FAILURE ){
+		zend_error(E_NOTICE, "Unable to find symbol: %s\n", Z_STRVAL_P(op1));
+		ZVAL_NULL(&EX_T(opline->result.var).tmp_var);
+	}else{
+		ZVAL_ZVAL(&EX_T(opline->result.var).tmp_var, *value, 1, 0);
+	}
+	
+	FREE_OP1();
 	CHECK_EXCEPTION();
 	ZEND_VM_NEXT_OPCODE();
 }

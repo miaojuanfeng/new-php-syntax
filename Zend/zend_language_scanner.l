@@ -1071,6 +1071,9 @@ NEWLINE ("\r"|"\n"|"\r\n")
 <ST_IN_SCRIPTING>"to" {
 	return T_TO;
 }
+<ST_IN_SCRIPTING>"get" {
+	return T_GET;
+}
 
 <ST_IN_SCRIPTING>"elseif" {
 	return T_ELSEIF;

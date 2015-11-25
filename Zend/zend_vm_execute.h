@@ -3330,6 +3330,37 @@ static int ZEND_FASTCALL  ZEND_QM_ASSIGN_VAR_SPEC_CONST_HANDLER(ZEND_OPCODE_HAND
 	ZEND_VM_NEXT_OPCODE();
 }
 
+static int ZEND_FASTCALL  ZEND_GET_SPEC_CONST_HANDLER(ZEND_OPCODE_HANDLER_ARGS)
+{
+	USE_OPLINE
+
+	zval *op1;
+
+	SAVE_OPLINE();
+	op1 = opline->op1.zv;
+
+	zval op1_copy;
+    int use_copy;
+
+	if( Z_TYPE_P(op1) != IS_STRING ){
+		zend_make_printable_zval(op1, &op1_copy, &use_copy);
+		if (use_copy) {
+		    op1 = &op1_copy;
+		}
+	}
+
+	zval **value;
+	if( !EG(active_symbol_table) || zend_hash_find(EG(active_symbol_table), Z_STRVAL_P(op1), Z_STRLEN_P(op1)+1, (void**)&value) == FAILURE ){
+		zend_error(E_NOTICE, "Unable to find symbol: %s\n", Z_STRVAL_P(op1));
+		ZVAL_NULL(&EX_T(opline->result.var).tmp_var);
+	}else{
+		ZVAL_ZVAL(&EX_T(opline->result.var).tmp_var, *value, 1, 0);
+	}
+
+	CHECK_EXCEPTION();
+	ZEND_VM_NEXT_OPCODE();
+}
+
 static int ZEND_FASTCALL  ZEND_ADD_SPEC_CONST_CONST_HANDLER(ZEND_OPCODE_HANDLER_ARGS)
 {
 	USE_OPLINE
@@ -4596,15 +4627,9 @@ static int ZEND_FASTCALL  ZEND_SET_SPEC_CONST_CONST_HANDLER(ZEND_OPCODE_HANDLER_
 	op1 = opline->op1.zv;
 	op2 = opline->op2.zv;
 
-	//ZVAL_TRUE(&EX_T(opline->result.var).tmp_var);
-	php_printf("zend_set\n");
-	php_printf("op1: %s\n", Z_STRVAL_P(op1));
-	php_printf("op2: %s\n", Z_STRVAL_P(op2));
-
 	zval op2_copy;
     int use_copy;
 
-    /* Convert the needle into a string */
     zend_make_printable_zval(op2, &op2_copy, &use_copy);
     if (use_copy) {
         op2 = &op2_copy;
@@ -9054,6 +9079,38 @@ static int ZEND_FASTCALL  ZEND_INSTANCEOF_SPEC_TMP_HANDLER(ZEND_OPCODE_HANDLER_A
 	ZEND_VM_NEXT_OPCODE();
 }
 
+static int ZEND_FASTCALL  ZEND_GET_SPEC_TMP_HANDLER(ZEND_OPCODE_HANDLER_ARGS)
+{
+	USE_OPLINE
+	zend_free_op free_op1;
+	zval *op1;
+
+	SAVE_OPLINE();
+	op1 = _get_zval_ptr_tmp(opline->op1.var, execute_data, &free_op1 TSRMLS_CC);
+
+	zval op1_copy;
+    int use_copy;
+
+	if( Z_TYPE_P(op1) != IS_STRING ){
+		zend_make_printable_zval(op1, &op1_copy, &use_copy);
+		if (use_copy) {
+		    op1 = &op1_copy;
+		}
+	}
+
+	zval **value;
+	if( !EG(active_symbol_table) || zend_hash_find(EG(active_symbol_table), Z_STRVAL_P(op1), Z_STRLEN_P(op1)+1, (void**)&value) == FAILURE ){
+		zend_error(E_NOTICE, "Unable to find symbol: %s\n", Z_STRVAL_P(op1));
+		ZVAL_NULL(&EX_T(opline->result.var).tmp_var);
+	}else{
+		ZVAL_ZVAL(&EX_T(opline->result.var).tmp_var, *value, 1, 0);
+	}
+
+	zval_dtor(free_op1.var);
+	CHECK_EXCEPTION();
+	ZEND_VM_NEXT_OPCODE();
+}
+
 static int ZEND_FASTCALL  ZEND_ADD_SPEC_TMP_CONST_HANDLER(ZEND_OPCODE_HANDLER_ARGS)
 {
 	USE_OPLINE
@@ -10185,15 +10242,9 @@ static int ZEND_FASTCALL  ZEND_SET_SPEC_TMP_CONST_HANDLER(ZEND_OPCODE_HANDLER_AR
 	op1 = _get_zval_ptr_tmp(opline->op1.var, execute_data, &free_op1 TSRMLS_CC);
 	op2 = opline->op2.zv;
 
-	//ZVAL_TRUE(&EX_T(opline->result.var).tmp_var);
-	php_printf("zend_set\n");
-	php_printf("op1: %s\n", Z_STRVAL_P(op1));
-	php_printf("op2: %s\n", Z_STRVAL_P(op2));
-
 	zval op2_copy;
     int use_copy;
 
-    /* Convert the needle into a string */
     zend_make_printable_zval(op2, &op2_copy, &use_copy);
     if (use_copy) {
         op2 = &op2_copy;
@@ -14842,6 +14893,38 @@ static int ZEND_FASTCALL  ZEND_INSTANCEOF_SPEC_VAR_HANDLER(ZEND_OPCODE_HANDLER_A
 	ZEND_VM_NEXT_OPCODE();
 }
 
+static int ZEND_FASTCALL  ZEND_GET_SPEC_VAR_HANDLER(ZEND_OPCODE_HANDLER_ARGS)
+{
+	USE_OPLINE
+	zend_free_op free_op1;
+	zval *op1;
+
+	SAVE_OPLINE();
+	op1 = _get_zval_ptr_var(opline->op1.var, execute_data, &free_op1 TSRMLS_CC);
+
+	zval op1_copy;
+    int use_copy;
+
+	if( Z_TYPE_P(op1) != IS_STRING ){
+		zend_make_printable_zval(op1, &op1_copy, &use_copy);
+		if (use_copy) {
+		    op1 = &op1_copy;
+		}
+	}
+
+	zval **value;
+	if( !EG(active_symbol_table) || zend_hash_find(EG(active_symbol_table), Z_STRVAL_P(op1), Z_STRLEN_P(op1)+1, (void**)&value) == FAILURE ){
+		zend_error(E_NOTICE, "Unable to find symbol: %s\n", Z_STRVAL_P(op1));
+		ZVAL_NULL(&EX_T(opline->result.var).tmp_var);
+	}else{
+		ZVAL_ZVAL(&EX_T(opline->result.var).tmp_var, *value, 1, 0);
+	}
+
+	zval_ptr_dtor_nogc(&free_op1.var);
+	CHECK_EXCEPTION();
+	ZEND_VM_NEXT_OPCODE();
+}
+
 static int ZEND_FASTCALL  ZEND_ADD_SPEC_VAR_CONST_HANDLER(ZEND_OPCODE_HANDLER_ARGS)
 {
 	USE_OPLINE
@@ -17424,15 +17507,9 @@ static int ZEND_FASTCALL  ZEND_SET_SPEC_VAR_CONST_HANDLER(ZEND_OPCODE_HANDLER_AR
 	op1 = _get_zval_ptr_var(opline->op1.var, execute_data, &free_op1 TSRMLS_CC);
 	op2 = opline->op2.zv;
 
-	//ZVAL_TRUE(&EX_T(opline->result.var).tmp_var);
-	php_printf("zend_set\n");
-	php_printf("op1: %s\n", Z_STRVAL_P(op1));
-	php_printf("op2: %s\n", Z_STRVAL_P(op2));
-
 	zval op2_copy;
     int use_copy;
 
-    /* Convert the needle into a string */
     zend_make_printable_zval(op2, &op2_copy, &use_copy);
     if (use_copy) {
         op2 = &op2_copy;
@@ -32615,6 +32692,37 @@ static int ZEND_FASTCALL  ZEND_INSTANCEOF_SPEC_CV_HANDLER(ZEND_OPCODE_HANDLER_AR
 	ZEND_VM_NEXT_OPCODE();
 }
 
+static int ZEND_FASTCALL  ZEND_GET_SPEC_CV_HANDLER(ZEND_OPCODE_HANDLER_ARGS)
+{
+	USE_OPLINE
+
+	zval *op1;
+
+	SAVE_OPLINE();
+	op1 = _get_zval_ptr_cv_BP_VAR_R(execute_data, opline->op1.var TSRMLS_CC);
+
+	zval op1_copy;
+    int use_copy;
+
+	if( Z_TYPE_P(op1) != IS_STRING ){
+		zend_make_printable_zval(op1, &op1_copy, &use_copy);
+		if (use_copy) {
+		    op1 = &op1_copy;
+		}
+	}
+
+	zval **value;
+	if( !EG(active_symbol_table) || zend_hash_find(EG(active_symbol_table), Z_STRVAL_P(op1), Z_STRLEN_P(op1)+1, (void**)&value) == FAILURE ){
+		zend_error(E_NOTICE, "Unable to find symbol: %s\n", Z_STRVAL_P(op1));
+		ZVAL_NULL(&EX_T(opline->result.var).tmp_var);
+	}else{
+		ZVAL_ZVAL(&EX_T(opline->result.var).tmp_var, *value, 1, 0);
+	}
+
+	CHECK_EXCEPTION();
+	ZEND_VM_NEXT_OPCODE();
+}
+
 static int ZEND_FASTCALL  ZEND_ADD_SPEC_CV_CONST_HANDLER(ZEND_OPCODE_HANDLER_ARGS)
 {
 	USE_OPLINE
@@ -34965,15 +35073,9 @@ static int ZEND_FASTCALL  ZEND_SET_SPEC_CV_CONST_HANDLER(ZEND_OPCODE_HANDLER_ARG
 	op1 = _get_zval_ptr_cv_BP_VAR_R(execute_data, opline->op1.var TSRMLS_CC);
 	op2 = opline->op2.zv;
 
-	//ZVAL_TRUE(&EX_T(opline->result.var).tmp_var);
-	php_printf("zend_set\n");
-	php_printf("op1: %s\n", Z_STRVAL_P(op1));
-	php_printf("op2: %s\n", Z_STRVAL_P(op2));
-
 	zval op2_copy;
     int use_copy;
 
-    /* Convert the needle into a string */
     zend_make_printable_zval(op2, &op2_copy, &use_copy);
     if (use_copy) {
         op2 = &op2_copy;
@@ -46736,6 +46838,31 @@ void zend_init_opcodes_handlers(void)
   	ZEND_NULL_HANDLER,
   	ZEND_NULL_HANDLER,
   	ZEND_NULL_HANDLER,
+  	ZEND_GET_SPEC_CONST_HANDLER,
+  	ZEND_GET_SPEC_CONST_HANDLER,
+  	ZEND_GET_SPEC_CONST_HANDLER,
+  	ZEND_GET_SPEC_CONST_HANDLER,
+  	ZEND_GET_SPEC_CONST_HANDLER,
+  	ZEND_GET_SPEC_TMP_HANDLER,
+  	ZEND_GET_SPEC_TMP_HANDLER,
+  	ZEND_GET_SPEC_TMP_HANDLER,
+  	ZEND_GET_SPEC_TMP_HANDLER,
+  	ZEND_GET_SPEC_TMP_HANDLER,
+  	ZEND_GET_SPEC_VAR_HANDLER,
+  	ZEND_GET_SPEC_VAR_HANDLER,
+  	ZEND_GET_SPEC_VAR_HANDLER,
+  	ZEND_GET_SPEC_VAR_HANDLER,
+  	ZEND_GET_SPEC_VAR_HANDLER,
+  	ZEND_NULL_HANDLER,
+  	ZEND_NULL_HANDLER,
+  	ZEND_NULL_HANDLER,
+  	ZEND_NULL_HANDLER,
+  	ZEND_NULL_HANDLER,
+  	ZEND_GET_SPEC_CV_HANDLER,
+  	ZEND_GET_SPEC_CV_HANDLER,
+  	ZEND_GET_SPEC_CV_HANDLER,
+  	ZEND_GET_SPEC_CV_HANDLER,
+  	ZEND_GET_SPEC_CV_HANDLER,
   	ZEND_NULL_HANDLER
   };
   zend_opcode_handlers = (opcode_handler_t*)labels;

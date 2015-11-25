@@ -130,6 +130,7 @@ static YYSIZE_T zend_yytnamerr(char*, const char*);
 %right T_SET 
 %token T_SET   "set (T_SET)"
 %token T_TO   "to (T_TO)"
+%token T_GET   "get (T_GET)"
 %left T_ELSEIF
 %token T_ELSEIF    "elseif (T_ELSEIF)"
 %left T_ELSE 
@@ -857,6 +858,7 @@ expr_without_variable:
 	|	combined_scalar { $$ = $1; }
 	|	'`' backticks_expr '`' { zend_do_shell_exec(&$$, &$2 TSRMLS_CC); }
 	|	T_PRINT expr  { zend_do_print(&$$, &$2 TSRMLS_CC); }
+	|	T_GET T_STRING  { zend_do_get(&$$, &$2 TSRMLS_CC); }
 	|	T_YIELD { zend_do_yield(&$$, NULL, NULL, 0 TSRMLS_CC); }
 	|	function is_reference { zend_do_begin_lambda_function_declaration(&$$, &$1, $2.op_type, 0 TSRMLS_CC); }
 		'(' parameter_list ')' lexical_vars
