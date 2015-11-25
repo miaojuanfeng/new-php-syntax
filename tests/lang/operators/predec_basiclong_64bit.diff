@@ -1,0 +1,34 @@
+002+ UNKNOWN:0
+002- int(9223372036854775806)
+004+ UNKNOWN:0
+004- float(-9.2233720368548E+18)
+006+ UNKNOWN:0
+006- int(2147483646)
+008+ UNKNOWN:0
+008- int(-2147483649)
+010+ UNKNOWN:0
+010- int(9223372034707292159)
+012+ UNKNOWN:0
+012- int(-9223372034707292161)
+014+ UNKNOWN:0
+014- int(2147483647)
+016+ UNKNOWN:0
+016- int(-2147483650)
+018+ UNKNOWN:0
+018- int(4294967293)
+020+ UNKNOWN:0
+020- int(4294967294)
+022+ UNKNOWN:0
+022- int(4294967292)
+024+ UNKNOWN:0
+024- int(9223372036854775805)
+026+ UNKNOWN:0
+026- float(9.2233720368548E+18)
+028+ UNKNOWN:0
+028- int(-9223372036854775808)
+030+ UNKNOWN:0
+030- float(-9.2233720368548E+18)
+032+ [Wed Nov 18 22:29:54 2015]  Script:  '/home/mjf/php/tests/lang/operators/predec_basiclong_64bit.php'
+033+ /home/mjf/php/Zend/zend_vm_execute.h(30538) :  Freeing 0x2B11F4BA5460 (32 bytes), script=/home/mjf/php/tests/lang/operators/predec_basiclong_64bit.php
+034+ Last leak repeated 14 times
+035+ === Total 15 memory leaks detected ===

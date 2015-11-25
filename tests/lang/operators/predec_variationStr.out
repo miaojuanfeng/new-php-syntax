@@ -1,0 +1,33 @@
+--- testing: '0' ---
+UNKNOWN:0
+--- testing: '65' ---
+UNKNOWN:0
+--- testing: '-44' ---
+UNKNOWN:0
+--- testing: '1.2' ---
+UNKNOWN:0
+--- testing: '-7.7' ---
+UNKNOWN:0
+--- testing: 'abc' ---
+UNKNOWN:0
+--- testing: '123abc' ---
+UNKNOWN:0
+--- testing: '123e5' ---
+UNKNOWN:0
+--- testing: '123e5xyz' ---
+UNKNOWN:0
+--- testing: ' 123abc' ---
+UNKNOWN:0
+--- testing: '123 abc' ---
+UNKNOWN:0
+--- testing: '123abc ' ---
+UNKNOWN:0
+--- testing: '3.4a' ---
+UNKNOWN:0
+--- testing: 'a5.9' ---
+UNKNOWN:0
+===DONE===
+[Wed Nov 18 22:29:54 2015]  Script:  '/home/mjf/php/tests/lang/operators/predec_variationStr.php'
+/home/mjf/php/Zend/zend_vm_execute.h(30538) :  Freeing 0x2AB6DA6C6EF0 (32 bytes), script=/home/mjf/php/tests/lang/operators/predec_variationStr.php
+Last leak repeated 13 times
+=== Total 14 memory leaks detected ===

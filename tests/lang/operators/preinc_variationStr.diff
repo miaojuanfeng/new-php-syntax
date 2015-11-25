@@ -1,0 +1,7 @@
+030+ [Wed Nov 18 22:29:54 2015]  Script:  '/home/mjf/php/tests/lang/operators/preinc_variationStr.php'
+031+ /home/mjf/php/Zend/zend_operators.c(1924) :  Freeing 0x2B6E657B49D0 (4 bytes), script=/home/mjf/php/tests/lang/operators/preinc_variationStr.php
+032+ Last leak repeated 7 times
+033+ [Wed Nov 18 22:29:54 2015]  Script:  '/home/mjf/php/tests/lang/operators/preinc_variationStr.php'
+034+ /home/mjf/php/Zend/zend_vm_execute.h(30489) :  Freeing 0x2B6E657B5EF0 (32 bytes), script=/home/mjf/php/tests/lang/operators/preinc_variationStr.php
+035+ Last leak repeated 13 times
+036+ === Total 22 memory leaks detected ===

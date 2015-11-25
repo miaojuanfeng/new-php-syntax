@@ -1,0 +1,4 @@
+032+ [Wed Nov 18 22:29:54 2015]  Script:  '/home/mjf/php/tests/lang/operators/preinc_basiclong_64bit.php'
+033+ /home/mjf/php/Zend/zend_vm_execute.h(30489) :  Freeing 0x2ACA8D909460 (32 bytes), script=/home/mjf/php/tests/lang/operators/preinc_basiclong_64bit.php
+034+ Last leak repeated 14 times
+035+ === Total 15 memory leaks detected ===

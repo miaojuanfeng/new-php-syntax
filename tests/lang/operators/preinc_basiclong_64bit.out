@@ -1,0 +1,35 @@
+--- testing: 9223372036854775807 ---
+float(9.2233720368548E+18)
+--- testing: -9223372036854775808 ---
+int(-9223372036854775807)
+--- testing: 2147483647 ---
+int(2147483648)
+--- testing: -2147483648 ---
+int(-2147483647)
+--- testing: 9223372034707292160 ---
+int(9223372034707292161)
+--- testing: -9223372034707292160 ---
+int(-9223372034707292159)
+--- testing: 2147483648 ---
+int(2147483649)
+--- testing: -2147483649 ---
+int(-2147483648)
+--- testing: 4294967294 ---
+int(4294967295)
+--- testing: 4294967295 ---
+int(4294967296)
+--- testing: 4294967293 ---
+int(4294967294)
+--- testing: 9223372036854775806 ---
+int(9223372036854775807)
+--- testing: 9.2233720368548E+18 ---
+float(9.2233720368548E+18)
+--- testing: -9223372036854775807 ---
+int(-9223372036854775806)
+--- testing: -9.2233720368548E+18 ---
+float(-9.2233720368548E+18)
+===DONE===
+[Wed Nov 18 22:29:54 2015]  Script:  '/home/mjf/php/tests/lang/operators/preinc_basiclong_64bit.php'
+/home/mjf/php/Zend/zend_vm_execute.h(30489) :  Freeing 0x2ACA8D909460 (32 bytes), script=/home/mjf/php/tests/lang/operators/preinc_basiclong_64bit.php
+Last leak repeated 14 times
+=== Total 15 memory leaks detected ===

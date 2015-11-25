@@ -1,0 +1,35 @@
+--- testing: 9223372036854775807 ---
+UNKNOWN:0
+--- testing: -9223372036854775808 ---
+UNKNOWN:0
+--- testing: 2147483647 ---
+UNKNOWN:0
+--- testing: -2147483648 ---
+UNKNOWN:0
+--- testing: 9223372034707292160 ---
+UNKNOWN:0
+--- testing: -9223372034707292160 ---
+UNKNOWN:0
+--- testing: 2147483648 ---
+UNKNOWN:0
+--- testing: -2147483649 ---
+UNKNOWN:0
+--- testing: 4294967294 ---
+UNKNOWN:0
+--- testing: 4294967295 ---
+UNKNOWN:0
+--- testing: 4294967293 ---
+UNKNOWN:0
+--- testing: 9223372036854775806 ---
+UNKNOWN:0
+--- testing: 9.2233720368548E+18 ---
+UNKNOWN:0
+--- testing: -9223372036854775807 ---
+UNKNOWN:0
+--- testing: -9.2233720368548E+18 ---
+UNKNOWN:0
+===DONE===
+[Wed Nov 18 22:29:54 2015]  Script:  '/home/mjf/php/tests/lang/operators/predec_basiclong_64bit.php'
+/home/mjf/php/Zend/zend_vm_execute.h(30538) :  Freeing 0x2B11F4BA5460 (32 bytes), script=/home/mjf/php/tests/lang/operators/predec_basiclong_64bit.php
+Last leak repeated 14 times
+=== Total 15 memory leaks detected ===

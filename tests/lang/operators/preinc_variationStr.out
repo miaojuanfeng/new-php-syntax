@@ -1,0 +1,36 @@
+--- testing: '0' ---
+int(1)
+--- testing: '65' ---
+int(66)
+--- testing: '-44' ---
+int(-43)
+--- testing: '1.2' ---
+float(2.2)
+--- testing: '-7.7' ---
+float(-6.7)
+--- testing: 'abc' ---
+string(3) "abd"
+--- testing: '123abc' ---
+string(6) "123abd"
+--- testing: '123e5' ---
+float(12300001)
+--- testing: '123e5xyz' ---
+string(8) "123e5xza"
+--- testing: ' 123abc' ---
+string(7) " 123abd"
+--- testing: '123 abc' ---
+string(7) "123 abd"
+--- testing: '123abc ' ---
+string(7) "123abc "
+--- testing: '3.4a' ---
+string(4) "3.4b"
+--- testing: 'a5.9' ---
+string(4) "a5.0"
+===DONE===
+[Wed Nov 18 22:29:54 2015]  Script:  '/home/mjf/php/tests/lang/operators/preinc_variationStr.php'
+/home/mjf/php/Zend/zend_operators.c(1924) :  Freeing 0x2B6E657B49D0 (4 bytes), script=/home/mjf/php/tests/lang/operators/preinc_variationStr.php
+Last leak repeated 7 times
+[Wed Nov 18 22:29:54 2015]  Script:  '/home/mjf/php/tests/lang/operators/preinc_variationStr.php'
+/home/mjf/php/Zend/zend_vm_execute.h(30489) :  Freeing 0x2B6E657B5EF0 (32 bytes), script=/home/mjf/php/tests/lang/operators/preinc_variationStr.php
+Last leak repeated 13 times
+=== Total 22 memory leaks detected ===
