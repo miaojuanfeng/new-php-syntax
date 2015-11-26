@@ -4573,7 +4573,7 @@ static int ZEND_FASTCALL  ZEND_IN_SPEC_CONST_CONST_HANDLER(ZEND_OPCODE_HANDLER_A
 	        /* For empty needles return true */
 	        ZVAL_TRUE(&EX_T(opline->result.var).tmp_var);
 	    } else {
-	        char *found = zend_memnstr(
+	        const char *found = zend_memnstr(
 	            Z_STRVAL_P(op2),                  /* haystack */
 	            Z_STRVAL_P(op1),                  /* needle */
 	            Z_STRLEN_P(op1),                  /* needle length */
@@ -4630,14 +4630,19 @@ static int ZEND_FASTCALL  ZEND_SET_SPEC_CONST_CONST_HANDLER(ZEND_OPCODE_HANDLER_
 	zval op2_copy;
     int use_copy;
 
-    zend_make_printable_zval(op2, &op2_copy, &use_copy);
-    if (use_copy) {
-        op2 = &op2_copy;
-    }
+    if( Z_TYPE_P(op2) != IS_STRING ){
+	    zend_make_printable_zval(op2, &op2_copy, &use_copy);
+	    if (use_copy) {
+	        op2 = &op2_copy;
+	    }
+	}
 
-   if( !EG(active_symbol_table) || zend_hash_update(EG(active_symbol_table), Z_STRVAL_P(op2), Z_STRLEN_P(op2)+1, (void**)&op1, sizeof(zval*), NULL) == FAILURE ){
-   		php_printf("update symbol table failed\n");
-   }
+    if( IS_CONST == IS_CV || IS_CONST == IS_VAR ){
+    	Z_ADDREF_P(op1);
+    }
+	if( !EG(active_symbol_table) || zend_hash_update(EG(active_symbol_table), Z_STRVAL_P(op2), Z_STRLEN_P(op2)+1, (void**)&op1, sizeof(zval*), NULL) == FAILURE ){
+		zend_error(E_ERROR, "Unable add variable to symbol table: %s\n", Z_STRVAL_P(op1));
+	}
 
 
 	CHECK_EXCEPTION();
@@ -5370,7 +5375,7 @@ static int ZEND_FASTCALL  ZEND_IN_SPEC_CONST_TMP_HANDLER(ZEND_OPCODE_HANDLER_ARG
 	        /* For empty needles return true */
 	        ZVAL_TRUE(&EX_T(opline->result.var).tmp_var);
 	    } else {
-	        char *found = zend_memnstr(
+	        const char *found = zend_memnstr(
 	            Z_STRVAL_P(op2),                  /* haystack */
 	            Z_STRVAL_P(op1),                  /* needle */
 	            Z_STRLEN_P(op1),                  /* needle length */
@@ -6466,7 +6471,7 @@ static int ZEND_FASTCALL  ZEND_IN_SPEC_CONST_VAR_HANDLER(ZEND_OPCODE_HANDLER_ARG
 	        /* For empty needles return true */
 	        ZVAL_TRUE(&EX_T(opline->result.var).tmp_var);
 	    } else {
-	        char *found = zend_memnstr(
+	        const char *found = zend_memnstr(
 	            Z_STRVAL_P(op2),                  /* haystack */
 	            Z_STRVAL_P(op1),                  /* needle */
 	            Z_STRLEN_P(op1),                  /* needle length */
@@ -8024,7 +8029,7 @@ static int ZEND_FASTCALL  ZEND_IN_SPEC_CONST_CV_HANDLER(ZEND_OPCODE_HANDLER_ARGS
 	        /* For empty needles return true */
 	        ZVAL_TRUE(&EX_T(opline->result.var).tmp_var);
 	    } else {
-	        char *found = zend_memnstr(
+	        const char *found = zend_memnstr(
 	            Z_STRVAL_P(op2),                  /* haystack */
 	            Z_STRVAL_P(op1),                  /* needle */
 	            Z_STRLEN_P(op1),                  /* needle length */
@@ -10187,7 +10192,7 @@ static int ZEND_FASTCALL  ZEND_IN_SPEC_TMP_CONST_HANDLER(ZEND_OPCODE_HANDLER_ARG
 	        /* For empty needles return true */
 	        ZVAL_TRUE(&EX_T(opline->result.var).tmp_var);
 	    } else {
-	        char *found = zend_memnstr(
+	        const char *found = zend_memnstr(
 	            Z_STRVAL_P(op2),                  /* haystack */
 	            Z_STRVAL_P(op1),                  /* needle */
 	            Z_STRLEN_P(op1),                  /* needle length */
@@ -10245,14 +10250,19 @@ static int ZEND_FASTCALL  ZEND_SET_SPEC_TMP_CONST_HANDLER(ZEND_OPCODE_HANDLER_AR
 	zval op2_copy;
     int use_copy;
 
-    zend_make_printable_zval(op2, &op2_copy, &use_copy);
-    if (use_copy) {
-        op2 = &op2_copy;
-    }
+    if( Z_TYPE_P(op2) != IS_STRING ){
+	    zend_make_printable_zval(op2, &op2_copy, &use_copy);
+	    if (use_copy) {
+	        op2 = &op2_copy;
+	    }
+	}
 
-   if( !EG(active_symbol_table) || zend_hash_update(EG(active_symbol_table), Z_STRVAL_P(op2), Z_STRLEN_P(op2)+1, (void**)&op1, sizeof(zval*), NULL) == FAILURE ){
-   		php_printf("update symbol table failed\n");
-   }
+    if( IS_TMP_VAR == IS_CV || IS_TMP_VAR == IS_VAR ){
+    	Z_ADDREF_P(op1);
+    }
+	if( !EG(active_symbol_table) || zend_hash_update(EG(active_symbol_table), Z_STRVAL_P(op2), Z_STRLEN_P(op2)+1, (void**)&op1, sizeof(zval*), NULL) == FAILURE ){
+		zend_error(E_ERROR, "Unable add variable to symbol table: %s\n", Z_STRVAL_P(op1));
+	}
 
 	zval_dtor(free_op1.var);
 
@@ -10988,7 +10998,7 @@ static int ZEND_FASTCALL  ZEND_IN_SPEC_TMP_TMP_HANDLER(ZEND_OPCODE_HANDLER_ARGS)
 	        /* For empty needles return true */
 	        ZVAL_TRUE(&EX_T(opline->result.var).tmp_var);
 	    } else {
-	        char *found = zend_memnstr(
+	        const char *found = zend_memnstr(
 	            Z_STRVAL_P(op2),                  /* haystack */
 	            Z_STRVAL_P(op1),                  /* needle */
 	            Z_STRLEN_P(op1),                  /* needle length */
@@ -12087,7 +12097,7 @@ static int ZEND_FASTCALL  ZEND_IN_SPEC_TMP_VAR_HANDLER(ZEND_OPCODE_HANDLER_ARGS)
 	        /* For empty needles return true */
 	        ZVAL_TRUE(&EX_T(opline->result.var).tmp_var);
 	    } else {
-	        char *found = zend_memnstr(
+	        const char *found = zend_memnstr(
 	            Z_STRVAL_P(op2),                  /* haystack */
 	            Z_STRVAL_P(op1),                  /* needle */
 	            Z_STRLEN_P(op1),                  /* needle length */
@@ -13436,7 +13446,7 @@ static int ZEND_FASTCALL  ZEND_IN_SPEC_TMP_CV_HANDLER(ZEND_OPCODE_HANDLER_ARGS)
 	        /* For empty needles return true */
 	        ZVAL_TRUE(&EX_T(opline->result.var).tmp_var);
 	    } else {
-	        char *found = zend_memnstr(
+	        const char *found = zend_memnstr(
 	            Z_STRVAL_P(op2),                  /* haystack */
 	            Z_STRVAL_P(op1),                  /* needle */
 	            Z_STRLEN_P(op1),                  /* needle length */
@@ -17452,7 +17462,7 @@ static int ZEND_FASTCALL  ZEND_IN_SPEC_VAR_CONST_HANDLER(ZEND_OPCODE_HANDLER_ARG
 	        /* For empty needles return true */
 	        ZVAL_TRUE(&EX_T(opline->result.var).tmp_var);
 	    } else {
-	        char *found = zend_memnstr(
+	        const char *found = zend_memnstr(
 	            Z_STRVAL_P(op2),                  /* haystack */
 	            Z_STRVAL_P(op1),                  /* needle */
 	            Z_STRLEN_P(op1),                  /* needle length */
@@ -17510,14 +17520,19 @@ static int ZEND_FASTCALL  ZEND_SET_SPEC_VAR_CONST_HANDLER(ZEND_OPCODE_HANDLER_AR
 	zval op2_copy;
     int use_copy;
 
-    zend_make_printable_zval(op2, &op2_copy, &use_copy);
-    if (use_copy) {
-        op2 = &op2_copy;
-    }
+    if( Z_TYPE_P(op2) != IS_STRING ){
+	    zend_make_printable_zval(op2, &op2_copy, &use_copy);
+	    if (use_copy) {
+	        op2 = &op2_copy;
+	    }
+	}
 
-   if( !EG(active_symbol_table) || zend_hash_update(EG(active_symbol_table), Z_STRVAL_P(op2), Z_STRLEN_P(op2)+1, (void**)&op1, sizeof(zval*), NULL) == FAILURE ){
-   		php_printf("update symbol table failed\n");
-   }
+    if( IS_VAR == IS_CV || IS_VAR == IS_VAR ){
+    	Z_ADDREF_P(op1);
+    }
+	if( !EG(active_symbol_table) || zend_hash_update(EG(active_symbol_table), Z_STRVAL_P(op2), Z_STRLEN_P(op2)+1, (void**)&op1, sizeof(zval*), NULL) == FAILURE ){
+		zend_error(E_ERROR, "Unable add variable to symbol table: %s\n", Z_STRVAL_P(op1));
+	}
 
 	zval_ptr_dtor_nogc(&free_op1.var);
 
@@ -19639,7 +19654,7 @@ static int ZEND_FASTCALL  ZEND_IN_SPEC_VAR_TMP_HANDLER(ZEND_OPCODE_HANDLER_ARGS)
 	        /* For empty needles return true */
 	        ZVAL_TRUE(&EX_T(opline->result.var).tmp_var);
 	    } else {
-	        char *found = zend_memnstr(
+	        const char *found = zend_memnstr(
 	            Z_STRVAL_P(op2),                  /* haystack */
 	            Z_STRVAL_P(op1),                  /* needle */
 	            Z_STRLEN_P(op1),                  /* needle length */
@@ -22179,7 +22194,7 @@ static int ZEND_FASTCALL  ZEND_IN_SPEC_VAR_VAR_HANDLER(ZEND_OPCODE_HANDLER_ARGS)
 	        /* For empty needles return true */
 	        ZVAL_TRUE(&EX_T(opline->result.var).tmp_var);
 	    } else {
-	        char *found = zend_memnstr(
+	        const char *found = zend_memnstr(
 	            Z_STRVAL_P(op2),                  /* haystack */
 	            Z_STRVAL_P(op1),                  /* needle */
 	            Z_STRLEN_P(op1),                  /* needle length */
@@ -25539,7 +25554,7 @@ static int ZEND_FASTCALL  ZEND_IN_SPEC_VAR_CV_HANDLER(ZEND_OPCODE_HANDLER_ARGS)
 	        /* For empty needles return true */
 	        ZVAL_TRUE(&EX_T(opline->result.var).tmp_var);
 	    } else {
-	        char *found = zend_memnstr(
+	        const char *found = zend_memnstr(
 	            Z_STRVAL_P(op2),                  /* haystack */
 	            Z_STRVAL_P(op1),                  /* needle */
 	            Z_STRLEN_P(op1),                  /* needle length */
@@ -35019,7 +35034,7 @@ static int ZEND_FASTCALL  ZEND_IN_SPEC_CV_CONST_HANDLER(ZEND_OPCODE_HANDLER_ARGS
 	        /* For empty needles return true */
 	        ZVAL_TRUE(&EX_T(opline->result.var).tmp_var);
 	    } else {
-	        char *found = zend_memnstr(
+	        const char *found = zend_memnstr(
 	            Z_STRVAL_P(op2),                  /* haystack */
 	            Z_STRVAL_P(op1),                  /* needle */
 	            Z_STRLEN_P(op1),                  /* needle length */
@@ -35076,14 +35091,19 @@ static int ZEND_FASTCALL  ZEND_SET_SPEC_CV_CONST_HANDLER(ZEND_OPCODE_HANDLER_ARG
 	zval op2_copy;
     int use_copy;
 
-    zend_make_printable_zval(op2, &op2_copy, &use_copy);
-    if (use_copy) {
-        op2 = &op2_copy;
-    }
+    if( Z_TYPE_P(op2) != IS_STRING ){
+	    zend_make_printable_zval(op2, &op2_copy, &use_copy);
+	    if (use_copy) {
+	        op2 = &op2_copy;
+	    }
+	}
 
-   if( !EG(active_symbol_table) || zend_hash_update(EG(active_symbol_table), Z_STRVAL_P(op2), Z_STRLEN_P(op2)+1, (void**)&op1, sizeof(zval*), NULL) == FAILURE ){
-   		php_printf("update symbol table failed\n");
-   }
+    if( IS_CV == IS_CV || IS_CV == IS_VAR ){
+    	Z_ADDREF_P(op1);
+    }
+	if( !EG(active_symbol_table) || zend_hash_update(EG(active_symbol_table), Z_STRVAL_P(op2), Z_STRLEN_P(op2)+1, (void**)&op1, sizeof(zval*), NULL) == FAILURE ){
+		zend_error(E_ERROR, "Unable add variable to symbol table: %s\n", Z_STRVAL_P(op1));
+	}
 
 
 	CHECK_EXCEPTION();
@@ -37065,7 +37085,7 @@ static int ZEND_FASTCALL  ZEND_IN_SPEC_CV_TMP_HANDLER(ZEND_OPCODE_HANDLER_ARGS)
 	        /* For empty needles return true */
 	        ZVAL_TRUE(&EX_T(opline->result.var).tmp_var);
 	    } else {
-	        char *found = zend_memnstr(
+	        const char *found = zend_memnstr(
 	            Z_STRVAL_P(op2),                  /* haystack */
 	            Z_STRVAL_P(op1),                  /* needle */
 	            Z_STRLEN_P(op1),                  /* needle length */
@@ -39464,7 +39484,7 @@ static int ZEND_FASTCALL  ZEND_IN_SPEC_CV_VAR_HANDLER(ZEND_OPCODE_HANDLER_ARGS)
 	        /* For empty needles return true */
 	        ZVAL_TRUE(&EX_T(opline->result.var).tmp_var);
 	    } else {
-	        char *found = zend_memnstr(
+	        const char *found = zend_memnstr(
 	            Z_STRVAL_P(op2),                  /* haystack */
 	            Z_STRVAL_P(op1),                  /* needle */
 	            Z_STRLEN_P(op1),                  /* needle length */
@@ -42534,7 +42554,7 @@ static int ZEND_FASTCALL  ZEND_IN_SPEC_CV_CV_HANDLER(ZEND_OPCODE_HANDLER_ARGS)
 	        /* For empty needles return true */
 	        ZVAL_TRUE(&EX_T(opline->result.var).tmp_var);
 	    } else {
-	        char *found = zend_memnstr(
+	        const char *found = zend_memnstr(
 	            Z_STRVAL_P(op2),                  /* haystack */
 	            Z_STRVAL_P(op1),                  /* needle */
 	            Z_STRLEN_P(op1),                  /* needle length */
