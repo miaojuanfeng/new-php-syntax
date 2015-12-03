@@ -53,3 +53,17 @@ echo get a;
 //Output: mjf
 ```
 `echo get a;` as same as `echo $a;`
+
+### issetor
+
+```
+<?php
+$a = 1;
+$c = issetor($a, 'b');
+echo $c;
+?>
+
+//Output: 1
+```
+`$c = issetor($a, 'b');` as same as `$c = isset($a) ? $a : 'b';`
+
