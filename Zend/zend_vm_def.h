@@ -5833,4 +5833,30 @@ ZEND_VM_HANDLER(170, ZEND_GET, CONST|TMP|VAR|CV, ANY)
 	ZEND_VM_NEXT_OPCODE();
 }
 
+ZEND_VM_HANDLER(171, ZEND_ISSETOR, CONST|TMP|VAR|CV, CONST|TMP|VAR|CV)
+{
+	USE_OPLINE
+	zend_free_op free_op1;
+	zend_free_op free_op2;
+	zval *op1;
+	zval *op2;
+
+	SAVE_OPLINE();
+	op1 = GET_OP1_ZVAL_PTR(BP_VAR_IS);
+	op2 = GET_OP2_ZVAL_PTR(BP_VAR_RW);
+
+	if( Z_TYPE_P(op1) != IS_NULL ){
+		Z_ADDREF_P(op1);
+		EX_T(opline->result.var).var.ptr = op1;
+	}else{
+		Z_ADDREF_P(op2);
+		EX_T(opline->result.var).var.ptr = op2;
+	}	
+	
+	FREE_OP1();
+	FREE_OP2();
+	CHECK_EXCEPTION();
+	ZEND_VM_NEXT_OPCODE();
+}
+
 ZEND_VM_EXPORT_HELPER(zend_do_fcall, zend_do_fcall_common_helper)

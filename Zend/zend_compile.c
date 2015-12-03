@@ -1296,6 +1296,19 @@ void zend_do_in_op(znode *result, const znode *op1, const znode *op2 TSRMLS_DC) 
 }
 /* }}} */
 
+void zend_do_issetor(znode *result, const znode *op1, const znode *op2 TSRMLS_DC) /* {{{ */
+{
+	zend_op *opline = get_next_op(CG(active_op_array) TSRMLS_CC);
+
+	opline->opcode = ZEND_ISSETOR;
+	opline->result_type = IS_VAR;
+	opline->result.var = get_temporary_variable(CG(active_op_array));
+	SET_NODE(opline->op1, op1);
+	SET_NODE(opline->op2, op2);
+	GET_NODE(result, opline->result);
+}
+/* }}} */
+
 void zend_do_if_after_statement(const znode *closing_bracket_token, unsigned char initialize TSRMLS_DC) /* {{{ */
 {
 	int if_end_op_number = get_next_op_number(CG(active_op_array));

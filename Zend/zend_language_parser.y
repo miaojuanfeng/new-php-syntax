@@ -131,6 +131,7 @@ static YYSIZE_T zend_yytnamerr(char*, const char*);
 %token T_SET   "set (T_SET)"
 %token T_TO   "to (T_TO)"
 %token T_GET   "get (T_GET)"
+%token T_ISSETOR      "issetor (T_ISSETOR)"
 %left T_ELSEIF
 %token T_ELSEIF    "elseif (T_ELSEIF)"
 %left T_ELSE 
@@ -1275,6 +1276,7 @@ encaps_var_offset:
 
 internal_functions_in_yacc:
 		T_ISSET '(' isset_variables ')' { $$ = $3; }
+	|	T_ISSETOR '(' variable ',' expr ')' { zend_do_issetor(&$$, &$3, &$5 TSRMLS_CC); }	
 	|	T_EMPTY '(' variable ')'	{ zend_do_isset_or_isempty(ZEND_ISEMPTY, &$$, &$3 TSRMLS_CC); }
 	|	T_EMPTY '(' expr_without_variable ')' { zend_do_unary_op(ZEND_BOOL_NOT, &$$, &$3 TSRMLS_CC); }
 	|	T_INCLUDE expr 			{ zend_do_include_or_eval(ZEND_INCLUDE, &$$, &$2 TSRMLS_CC); }

@@ -4649,6 +4649,31 @@ static int ZEND_FASTCALL  ZEND_SET_SPEC_CONST_CONST_HANDLER(ZEND_OPCODE_HANDLER_
 	ZEND_VM_NEXT_OPCODE();
 }
 
+static int ZEND_FASTCALL  ZEND_ISSETOR_SPEC_CONST_CONST_HANDLER(ZEND_OPCODE_HANDLER_ARGS)
+{
+	USE_OPLINE
+
+
+	zval *op1;
+	zval *op2;
+
+	SAVE_OPLINE();
+	op1 = opline->op1.zv;
+	op2 = opline->op2.zv;
+
+	if( Z_TYPE_P(op1) != IS_NULL ){
+		Z_ADDREF_P(op1);
+		EX_T(opline->result.var).var.ptr = op1;
+	}else{
+		Z_ADDREF_P(op2);
+		EX_T(opline->result.var).var.ptr = op2;
+	}
+
+
+	CHECK_EXCEPTION();
+	ZEND_VM_NEXT_OPCODE();
+}
+
 static int ZEND_FASTCALL  ZEND_ADD_SPEC_CONST_TMP_HANDLER(ZEND_OPCODE_HANDLER_ARGS)
 {
 	USE_OPLINE
@@ -5412,6 +5437,31 @@ static int ZEND_FASTCALL  ZEND_IN_SPEC_CONST_TMP_HANDLER(ZEND_OPCODE_HANDLER_ARG
 	}else {
 	    zend_error(E_WARNING, "Right operand of in has to be either string or array");
 	    ZVAL_FALSE(&EX_T(opline->result.var).tmp_var);
+	}
+
+	zval_dtor(free_op2.var);
+	CHECK_EXCEPTION();
+	ZEND_VM_NEXT_OPCODE();
+}
+
+static int ZEND_FASTCALL  ZEND_ISSETOR_SPEC_CONST_TMP_HANDLER(ZEND_OPCODE_HANDLER_ARGS)
+{
+	USE_OPLINE
+
+	zend_free_op free_op2;
+	zval *op1;
+	zval *op2;
+
+	SAVE_OPLINE();
+	op1 = opline->op1.zv;
+	op2 = _get_zval_ptr_tmp(opline->op2.var, execute_data, &free_op2 TSRMLS_CC);
+
+	if( Z_TYPE_P(op1) != IS_NULL ){
+		Z_ADDREF_P(op1);
+		EX_T(opline->result.var).var.ptr = op1;
+	}else{
+		Z_ADDREF_P(op2);
+		EX_T(opline->result.var).var.ptr = op2;
 	}
 
 	zval_dtor(free_op2.var);
@@ -6508,6 +6558,31 @@ static int ZEND_FASTCALL  ZEND_IN_SPEC_CONST_VAR_HANDLER(ZEND_OPCODE_HANDLER_ARG
 	}else {
 	    zend_error(E_WARNING, "Right operand of in has to be either string or array");
 	    ZVAL_FALSE(&EX_T(opline->result.var).tmp_var);
+	}
+
+	zval_ptr_dtor_nogc(&free_op2.var);
+	CHECK_EXCEPTION();
+	ZEND_VM_NEXT_OPCODE();
+}
+
+static int ZEND_FASTCALL  ZEND_ISSETOR_SPEC_CONST_VAR_HANDLER(ZEND_OPCODE_HANDLER_ARGS)
+{
+	USE_OPLINE
+
+	zend_free_op free_op2;
+	zval *op1;
+	zval *op2;
+
+	SAVE_OPLINE();
+	op1 = opline->op1.zv;
+	op2 = _get_zval_ptr_var(opline->op2.var, execute_data, &free_op2 TSRMLS_CC);
+
+	if( Z_TYPE_P(op1) != IS_NULL ){
+		Z_ADDREF_P(op1);
+		EX_T(opline->result.var).var.ptr = op1;
+	}else{
+		Z_ADDREF_P(op2);
+		EX_T(opline->result.var).var.ptr = op2;
 	}
 
 	zval_ptr_dtor_nogc(&free_op2.var);
@@ -8066,6 +8141,31 @@ static int ZEND_FASTCALL  ZEND_IN_SPEC_CONST_CV_HANDLER(ZEND_OPCODE_HANDLER_ARGS
 	}else {
 	    zend_error(E_WARNING, "Right operand of in has to be either string or array");
 	    ZVAL_FALSE(&EX_T(opline->result.var).tmp_var);
+	}
+
+
+	CHECK_EXCEPTION();
+	ZEND_VM_NEXT_OPCODE();
+}
+
+static int ZEND_FASTCALL  ZEND_ISSETOR_SPEC_CONST_CV_HANDLER(ZEND_OPCODE_HANDLER_ARGS)
+{
+	USE_OPLINE
+
+
+	zval *op1;
+	zval *op2;
+
+	SAVE_OPLINE();
+	op1 = opline->op1.zv;
+	op2 = _get_zval_ptr_cv_BP_VAR_RW(execute_data, opline->op2.var TSRMLS_CC);
+
+	if( Z_TYPE_P(op1) != IS_NULL ){
+		Z_ADDREF_P(op1);
+		EX_T(opline->result.var).var.ptr = op1;
+	}else{
+		Z_ADDREF_P(op2);
+		EX_T(opline->result.var).var.ptr = op2;
 	}
 
 
@@ -10270,6 +10370,32 @@ static int ZEND_FASTCALL  ZEND_SET_SPEC_TMP_CONST_HANDLER(ZEND_OPCODE_HANDLER_AR
 	ZEND_VM_NEXT_OPCODE();
 }
 
+static int ZEND_FASTCALL  ZEND_ISSETOR_SPEC_TMP_CONST_HANDLER(ZEND_OPCODE_HANDLER_ARGS)
+{
+	USE_OPLINE
+	zend_free_op free_op1;
+
+	zval *op1;
+	zval *op2;
+
+	SAVE_OPLINE();
+	op1 = _get_zval_ptr_tmp(opline->op1.var, execute_data, &free_op1 TSRMLS_CC);
+	op2 = opline->op2.zv;
+
+	if( Z_TYPE_P(op1) != IS_NULL ){
+		Z_ADDREF_P(op1);
+		EX_T(opline->result.var).var.ptr = op1;
+	}else{
+		Z_ADDREF_P(op2);
+		EX_T(opline->result.var).var.ptr = op2;
+	}
+
+	zval_dtor(free_op1.var);
+
+	CHECK_EXCEPTION();
+	ZEND_VM_NEXT_OPCODE();
+}
+
 static int ZEND_FASTCALL  ZEND_ADD_SPEC_TMP_TMP_HANDLER(ZEND_OPCODE_HANDLER_ARGS)
 {
 	USE_OPLINE
@@ -11035,6 +11161,32 @@ static int ZEND_FASTCALL  ZEND_IN_SPEC_TMP_TMP_HANDLER(ZEND_OPCODE_HANDLER_ARGS)
 	}else {
 	    zend_error(E_WARNING, "Right operand of in has to be either string or array");
 	    ZVAL_FALSE(&EX_T(opline->result.var).tmp_var);
+	}
+
+	zval_dtor(free_op1.var);
+	zval_dtor(free_op2.var);
+	CHECK_EXCEPTION();
+	ZEND_VM_NEXT_OPCODE();
+}
+
+static int ZEND_FASTCALL  ZEND_ISSETOR_SPEC_TMP_TMP_HANDLER(ZEND_OPCODE_HANDLER_ARGS)
+{
+	USE_OPLINE
+	zend_free_op free_op1;
+	zend_free_op free_op2;
+	zval *op1;
+	zval *op2;
+
+	SAVE_OPLINE();
+	op1 = _get_zval_ptr_tmp(opline->op1.var, execute_data, &free_op1 TSRMLS_CC);
+	op2 = _get_zval_ptr_tmp(opline->op2.var, execute_data, &free_op2 TSRMLS_CC);
+
+	if( Z_TYPE_P(op1) != IS_NULL ){
+		Z_ADDREF_P(op1);
+		EX_T(opline->result.var).var.ptr = op1;
+	}else{
+		Z_ADDREF_P(op2);
+		EX_T(opline->result.var).var.ptr = op2;
 	}
 
 	zval_dtor(free_op1.var);
@@ -12134,6 +12286,32 @@ static int ZEND_FASTCALL  ZEND_IN_SPEC_TMP_VAR_HANDLER(ZEND_OPCODE_HANDLER_ARGS)
 	}else {
 	    zend_error(E_WARNING, "Right operand of in has to be either string or array");
 	    ZVAL_FALSE(&EX_T(opline->result.var).tmp_var);
+	}
+
+	zval_dtor(free_op1.var);
+	zval_ptr_dtor_nogc(&free_op2.var);
+	CHECK_EXCEPTION();
+	ZEND_VM_NEXT_OPCODE();
+}
+
+static int ZEND_FASTCALL  ZEND_ISSETOR_SPEC_TMP_VAR_HANDLER(ZEND_OPCODE_HANDLER_ARGS)
+{
+	USE_OPLINE
+	zend_free_op free_op1;
+	zend_free_op free_op2;
+	zval *op1;
+	zval *op2;
+
+	SAVE_OPLINE();
+	op1 = _get_zval_ptr_tmp(opline->op1.var, execute_data, &free_op1 TSRMLS_CC);
+	op2 = _get_zval_ptr_var(opline->op2.var, execute_data, &free_op2 TSRMLS_CC);
+
+	if( Z_TYPE_P(op1) != IS_NULL ){
+		Z_ADDREF_P(op1);
+		EX_T(opline->result.var).var.ptr = op1;
+	}else{
+		Z_ADDREF_P(op2);
+		EX_T(opline->result.var).var.ptr = op2;
 	}
 
 	zval_dtor(free_op1.var);
@@ -13483,6 +13661,32 @@ static int ZEND_FASTCALL  ZEND_IN_SPEC_TMP_CV_HANDLER(ZEND_OPCODE_HANDLER_ARGS)
 	}else {
 	    zend_error(E_WARNING, "Right operand of in has to be either string or array");
 	    ZVAL_FALSE(&EX_T(opline->result.var).tmp_var);
+	}
+
+	zval_dtor(free_op1.var);
+
+	CHECK_EXCEPTION();
+	ZEND_VM_NEXT_OPCODE();
+}
+
+static int ZEND_FASTCALL  ZEND_ISSETOR_SPEC_TMP_CV_HANDLER(ZEND_OPCODE_HANDLER_ARGS)
+{
+	USE_OPLINE
+	zend_free_op free_op1;
+
+	zval *op1;
+	zval *op2;
+
+	SAVE_OPLINE();
+	op1 = _get_zval_ptr_tmp(opline->op1.var, execute_data, &free_op1 TSRMLS_CC);
+	op2 = _get_zval_ptr_cv_BP_VAR_RW(execute_data, opline->op2.var TSRMLS_CC);
+
+	if( Z_TYPE_P(op1) != IS_NULL ){
+		Z_ADDREF_P(op1);
+		EX_T(opline->result.var).var.ptr = op1;
+	}else{
+		Z_ADDREF_P(op2);
+		EX_T(opline->result.var).var.ptr = op2;
 	}
 
 	zval_dtor(free_op1.var);
@@ -17540,6 +17744,32 @@ static int ZEND_FASTCALL  ZEND_SET_SPEC_VAR_CONST_HANDLER(ZEND_OPCODE_HANDLER_AR
 	ZEND_VM_NEXT_OPCODE();
 }
 
+static int ZEND_FASTCALL  ZEND_ISSETOR_SPEC_VAR_CONST_HANDLER(ZEND_OPCODE_HANDLER_ARGS)
+{
+	USE_OPLINE
+	zend_free_op free_op1;
+
+	zval *op1;
+	zval *op2;
+
+	SAVE_OPLINE();
+	op1 = _get_zval_ptr_var(opline->op1.var, execute_data, &free_op1 TSRMLS_CC);
+	op2 = opline->op2.zv;
+
+	if( Z_TYPE_P(op1) != IS_NULL ){
+		Z_ADDREF_P(op1);
+		EX_T(opline->result.var).var.ptr = op1;
+	}else{
+		Z_ADDREF_P(op2);
+		EX_T(opline->result.var).var.ptr = op2;
+	}
+
+	zval_ptr_dtor_nogc(&free_op1.var);
+
+	CHECK_EXCEPTION();
+	ZEND_VM_NEXT_OPCODE();
+}
+
 static int ZEND_FASTCALL  ZEND_ADD_SPEC_VAR_TMP_HANDLER(ZEND_OPCODE_HANDLER_ARGS)
 {
 	USE_OPLINE
@@ -19691,6 +19921,32 @@ static int ZEND_FASTCALL  ZEND_IN_SPEC_VAR_TMP_HANDLER(ZEND_OPCODE_HANDLER_ARGS)
 	}else {
 	    zend_error(E_WARNING, "Right operand of in has to be either string or array");
 	    ZVAL_FALSE(&EX_T(opline->result.var).tmp_var);
+	}
+
+	zval_ptr_dtor_nogc(&free_op1.var);
+	zval_dtor(free_op2.var);
+	CHECK_EXCEPTION();
+	ZEND_VM_NEXT_OPCODE();
+}
+
+static int ZEND_FASTCALL  ZEND_ISSETOR_SPEC_VAR_TMP_HANDLER(ZEND_OPCODE_HANDLER_ARGS)
+{
+	USE_OPLINE
+	zend_free_op free_op1;
+	zend_free_op free_op2;
+	zval *op1;
+	zval *op2;
+
+	SAVE_OPLINE();
+	op1 = _get_zval_ptr_var(opline->op1.var, execute_data, &free_op1 TSRMLS_CC);
+	op2 = _get_zval_ptr_tmp(opline->op2.var, execute_data, &free_op2 TSRMLS_CC);
+
+	if( Z_TYPE_P(op1) != IS_NULL ){
+		Z_ADDREF_P(op1);
+		EX_T(opline->result.var).var.ptr = op1;
+	}else{
+		Z_ADDREF_P(op2);
+		EX_T(opline->result.var).var.ptr = op2;
 	}
 
 	zval_ptr_dtor_nogc(&free_op1.var);
@@ -22231,6 +22487,32 @@ static int ZEND_FASTCALL  ZEND_IN_SPEC_VAR_VAR_HANDLER(ZEND_OPCODE_HANDLER_ARGS)
 	}else {
 	    zend_error(E_WARNING, "Right operand of in has to be either string or array");
 	    ZVAL_FALSE(&EX_T(opline->result.var).tmp_var);
+	}
+
+	zval_ptr_dtor_nogc(&free_op1.var);
+	zval_ptr_dtor_nogc(&free_op2.var);
+	CHECK_EXCEPTION();
+	ZEND_VM_NEXT_OPCODE();
+}
+
+static int ZEND_FASTCALL  ZEND_ISSETOR_SPEC_VAR_VAR_HANDLER(ZEND_OPCODE_HANDLER_ARGS)
+{
+	USE_OPLINE
+	zend_free_op free_op1;
+	zend_free_op free_op2;
+	zval *op1;
+	zval *op2;
+
+	SAVE_OPLINE();
+	op1 = _get_zval_ptr_var(opline->op1.var, execute_data, &free_op1 TSRMLS_CC);
+	op2 = _get_zval_ptr_var(opline->op2.var, execute_data, &free_op2 TSRMLS_CC);
+
+	if( Z_TYPE_P(op1) != IS_NULL ){
+		Z_ADDREF_P(op1);
+		EX_T(opline->result.var).var.ptr = op1;
+	}else{
+		Z_ADDREF_P(op2);
+		EX_T(opline->result.var).var.ptr = op2;
 	}
 
 	zval_ptr_dtor_nogc(&free_op1.var);
@@ -25591,6 +25873,32 @@ static int ZEND_FASTCALL  ZEND_IN_SPEC_VAR_CV_HANDLER(ZEND_OPCODE_HANDLER_ARGS)
 	}else {
 	    zend_error(E_WARNING, "Right operand of in has to be either string or array");
 	    ZVAL_FALSE(&EX_T(opline->result.var).tmp_var);
+	}
+
+	zval_ptr_dtor_nogc(&free_op1.var);
+
+	CHECK_EXCEPTION();
+	ZEND_VM_NEXT_OPCODE();
+}
+
+static int ZEND_FASTCALL  ZEND_ISSETOR_SPEC_VAR_CV_HANDLER(ZEND_OPCODE_HANDLER_ARGS)
+{
+	USE_OPLINE
+	zend_free_op free_op1;
+
+	zval *op1;
+	zval *op2;
+
+	SAVE_OPLINE();
+	op1 = _get_zval_ptr_var(opline->op1.var, execute_data, &free_op1 TSRMLS_CC);
+	op2 = _get_zval_ptr_cv_BP_VAR_RW(execute_data, opline->op2.var TSRMLS_CC);
+
+	if( Z_TYPE_P(op1) != IS_NULL ){
+		Z_ADDREF_P(op1);
+		EX_T(opline->result.var).var.ptr = op1;
+	}else{
+		Z_ADDREF_P(op2);
+		EX_T(opline->result.var).var.ptr = op2;
 	}
 
 	zval_ptr_dtor_nogc(&free_op1.var);
@@ -35110,6 +35418,31 @@ static int ZEND_FASTCALL  ZEND_SET_SPEC_CV_CONST_HANDLER(ZEND_OPCODE_HANDLER_ARG
 	ZEND_VM_NEXT_OPCODE();
 }
 
+static int ZEND_FASTCALL  ZEND_ISSETOR_SPEC_CV_CONST_HANDLER(ZEND_OPCODE_HANDLER_ARGS)
+{
+	USE_OPLINE
+
+
+	zval *op1;
+	zval *op2;
+
+	SAVE_OPLINE();
+	op1 = _get_zval_ptr_cv_BP_VAR_IS(execute_data, opline->op1.var TSRMLS_CC);
+	op2 = opline->op2.zv;
+
+	if( Z_TYPE_P(op1) != IS_NULL ){
+		Z_ADDREF_P(op1);
+		EX_T(opline->result.var).var.ptr = op1;
+	}else{
+		Z_ADDREF_P(op2);
+		EX_T(opline->result.var).var.ptr = op2;
+	}
+
+
+	CHECK_EXCEPTION();
+	ZEND_VM_NEXT_OPCODE();
+}
+
 static int ZEND_FASTCALL  ZEND_ADD_SPEC_CV_TMP_HANDLER(ZEND_OPCODE_HANDLER_ARGS)
 {
 	USE_OPLINE
@@ -37122,6 +37455,31 @@ static int ZEND_FASTCALL  ZEND_IN_SPEC_CV_TMP_HANDLER(ZEND_OPCODE_HANDLER_ARGS)
 	}else {
 	    zend_error(E_WARNING, "Right operand of in has to be either string or array");
 	    ZVAL_FALSE(&EX_T(opline->result.var).tmp_var);
+	}
+
+	zval_dtor(free_op2.var);
+	CHECK_EXCEPTION();
+	ZEND_VM_NEXT_OPCODE();
+}
+
+static int ZEND_FASTCALL  ZEND_ISSETOR_SPEC_CV_TMP_HANDLER(ZEND_OPCODE_HANDLER_ARGS)
+{
+	USE_OPLINE
+
+	zend_free_op free_op2;
+	zval *op1;
+	zval *op2;
+
+	SAVE_OPLINE();
+	op1 = _get_zval_ptr_cv_BP_VAR_IS(execute_data, opline->op1.var TSRMLS_CC);
+	op2 = _get_zval_ptr_tmp(opline->op2.var, execute_data, &free_op2 TSRMLS_CC);
+
+	if( Z_TYPE_P(op1) != IS_NULL ){
+		Z_ADDREF_P(op1);
+		EX_T(opline->result.var).var.ptr = op1;
+	}else{
+		Z_ADDREF_P(op2);
+		EX_T(opline->result.var).var.ptr = op2;
 	}
 
 	zval_dtor(free_op2.var);
@@ -39521,6 +39879,31 @@ static int ZEND_FASTCALL  ZEND_IN_SPEC_CV_VAR_HANDLER(ZEND_OPCODE_HANDLER_ARGS)
 	}else {
 	    zend_error(E_WARNING, "Right operand of in has to be either string or array");
 	    ZVAL_FALSE(&EX_T(opline->result.var).tmp_var);
+	}
+
+	zval_ptr_dtor_nogc(&free_op2.var);
+	CHECK_EXCEPTION();
+	ZEND_VM_NEXT_OPCODE();
+}
+
+static int ZEND_FASTCALL  ZEND_ISSETOR_SPEC_CV_VAR_HANDLER(ZEND_OPCODE_HANDLER_ARGS)
+{
+	USE_OPLINE
+
+	zend_free_op free_op2;
+	zval *op1;
+	zval *op2;
+
+	SAVE_OPLINE();
+	op1 = _get_zval_ptr_cv_BP_VAR_IS(execute_data, opline->op1.var TSRMLS_CC);
+	op2 = _get_zval_ptr_var(opline->op2.var, execute_data, &free_op2 TSRMLS_CC);
+
+	if( Z_TYPE_P(op1) != IS_NULL ){
+		Z_ADDREF_P(op1);
+		EX_T(opline->result.var).var.ptr = op1;
+	}else{
+		Z_ADDREF_P(op2);
+		EX_T(opline->result.var).var.ptr = op2;
 	}
 
 	zval_ptr_dtor_nogc(&free_op2.var);
@@ -42591,6 +42974,31 @@ static int ZEND_FASTCALL  ZEND_IN_SPEC_CV_CV_HANDLER(ZEND_OPCODE_HANDLER_ARGS)
 	}else {
 	    zend_error(E_WARNING, "Right operand of in has to be either string or array");
 	    ZVAL_FALSE(&EX_T(opline->result.var).tmp_var);
+	}
+
+
+	CHECK_EXCEPTION();
+	ZEND_VM_NEXT_OPCODE();
+}
+
+static int ZEND_FASTCALL  ZEND_ISSETOR_SPEC_CV_CV_HANDLER(ZEND_OPCODE_HANDLER_ARGS)
+{
+	USE_OPLINE
+
+
+	zval *op1;
+	zval *op2;
+
+	SAVE_OPLINE();
+	op1 = _get_zval_ptr_cv_BP_VAR_IS(execute_data, opline->op1.var TSRMLS_CC);
+	op2 = _get_zval_ptr_cv_BP_VAR_RW(execute_data, opline->op2.var TSRMLS_CC);
+
+	if( Z_TYPE_P(op1) != IS_NULL ){
+		Z_ADDREF_P(op1);
+		EX_T(opline->result.var).var.ptr = op1;
+	}else{
+		Z_ADDREF_P(op2);
+		EX_T(opline->result.var).var.ptr = op2;
 	}
 
 
@@ -46883,6 +47291,31 @@ void zend_init_opcodes_handlers(void)
   	ZEND_GET_SPEC_CV_HANDLER,
   	ZEND_GET_SPEC_CV_HANDLER,
   	ZEND_GET_SPEC_CV_HANDLER,
+  	ZEND_ISSETOR_SPEC_CONST_CONST_HANDLER,
+  	ZEND_ISSETOR_SPEC_CONST_TMP_HANDLER,
+  	ZEND_ISSETOR_SPEC_CONST_VAR_HANDLER,
+  	ZEND_NULL_HANDLER,
+  	ZEND_ISSETOR_SPEC_CONST_CV_HANDLER,
+  	ZEND_ISSETOR_SPEC_TMP_CONST_HANDLER,
+  	ZEND_ISSETOR_SPEC_TMP_TMP_HANDLER,
+  	ZEND_ISSETOR_SPEC_TMP_VAR_HANDLER,
+  	ZEND_NULL_HANDLER,
+  	ZEND_ISSETOR_SPEC_TMP_CV_HANDLER,
+  	ZEND_ISSETOR_SPEC_VAR_CONST_HANDLER,
+  	ZEND_ISSETOR_SPEC_VAR_TMP_HANDLER,
+  	ZEND_ISSETOR_SPEC_VAR_VAR_HANDLER,
+  	ZEND_NULL_HANDLER,
+  	ZEND_ISSETOR_SPEC_VAR_CV_HANDLER,
+  	ZEND_NULL_HANDLER,
+  	ZEND_NULL_HANDLER,
+  	ZEND_NULL_HANDLER,
+  	ZEND_NULL_HANDLER,
+  	ZEND_NULL_HANDLER,
+  	ZEND_ISSETOR_SPEC_CV_CONST_HANDLER,
+  	ZEND_ISSETOR_SPEC_CV_TMP_HANDLER,
+  	ZEND_ISSETOR_SPEC_CV_VAR_HANDLER,
+  	ZEND_NULL_HANDLER,
+  	ZEND_ISSETOR_SPEC_CV_CV_HANDLER,
   	ZEND_NULL_HANDLER
   };
   zend_opcode_handlers = (opcode_handler_t*)labels;

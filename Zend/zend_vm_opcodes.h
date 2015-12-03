@@ -180,5 +180,6 @@ END_EXTERN_C()
 #define ZEND_IN                              168
 #define ZEND_SET                             169
 #define ZEND_GET                             170
+#define ZEND_ISSETOR                         171
 
 #endif
